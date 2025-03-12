@@ -4,7 +4,7 @@
 
 void ApproximationAlgorithm::EWSample(const Graph *graph, float probability){
 
-    ui approx_triangle_count = 0;
+    size_t approx_triangle_count = 0;
     std::vector<std::pair<VertexID, VertexID>> sampled_edges;
 
     VertexID* neighbors;
