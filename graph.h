@@ -19,6 +19,9 @@ private:
     ui* offsets;
     VertexID* neighbors;
 
+    //partition
+    ui* idx_array;
+    std::unordered_map<VertexID, ui> vtx_map_after_partition;
 
 public:
 
@@ -39,6 +42,7 @@ public:
 
 public:
     void loadGraphFromFile(const std::string& file_path);
+    void loadGraphFromFileWithReindexing(const std::string& file_path);
     void printGraphMetaData();
 
 public:
