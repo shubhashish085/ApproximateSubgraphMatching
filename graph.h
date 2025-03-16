@@ -17,11 +17,7 @@ private:
 
     ui* degrees;
     ui* offsets;
-    VertexID* neighbors;
-
-    //partition
-    ui* idx_array;
-    std::unordered_map<VertexID, ui> vtx_map_after_partition;
+    VertexID* neighbors;    
 
 public:
 
@@ -40,15 +36,23 @@ public:
         delete[] neighbors;
     }
 
-public:
     void loadGraphFromFile(const std::string& file_path);
     void loadGraphFromFileWithReindexing(const std::string& file_path);
+    void loadGraphWithPartitionedEdgesFromFile(const std::string& partitioned_edge_file_path, const std::string& original_file_path); 
     void printGraphMetaData();
-
-public:
 
     std::vector<std::pair<VertexID, VertexID>> edges;
     std::map<std::pair<VertexID,VertexID>, bool> edge_map;
+
+    //partition
+    ui* idx_array;
+    std::unordered_map<VertexID, ui> vtx_map_after_partition;
+
+    // For Partitioned Edges
+    std::map<VertexID, VertexID> partition_edges;
+    std::map<VertexID, ui> partition_vertices;
+    std::map<std::pair<VertexID,VertexID>, bool> full_graph_edge_map;
+
 
     const ui* getOffsets() const {
         return offsets;
