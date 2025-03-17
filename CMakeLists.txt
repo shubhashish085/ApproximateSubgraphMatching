@@ -19,5 +19,7 @@ set(SUBGRAPH_MATCHING_FILE_LIST
         wtime.h
         StudyPerformance.cpp)
 
-
 add_executable(SubgraphMatching.out ${SUBGRAPH_MATCHING_FILE_LIST})
+
+find_package(MPI REQUIRED)
+target_link_libraries(SubgraphMatching.out PUBLIC MPI::MPI_CXX)

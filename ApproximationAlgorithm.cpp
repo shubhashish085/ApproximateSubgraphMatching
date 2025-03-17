@@ -3,9 +3,9 @@
 #include "types.h"
 #include <vector>
 
-void ApproximationAlgorithm::EWSample(const Graph *graph, float probability){
+ui ApproximationAlgorithm::EWSample(const Graph *graph, float probability){
 
-    size_t approx_triangle_count = 0;
+    ui approx_triangle_count = 0;
     std::vector<std::pair<VertexID, VertexID>> sampled_edges;
 
     VertexID* neighbors;
@@ -57,17 +57,19 @@ void ApproximationAlgorithm::EWSample(const Graph *graph, float probability){
     approx_triangle_count = (ui)(approx_triangle_count /(float) (3 * probability));
 
     std::cout << "Approximate Triangle Count with Probability : " << probability << " - " << approx_triangle_count << std::endl;
+
+    return approx_triangle_count;
 }
 
 
-void ApproximationAlgorithm::EWSampleForPartitionEdges(const Graph *graph, float probability){
+ui ApproximationAlgorithm::EWSampleForPartitionEdges(const Graph *graph, float probability){
 
-    size_t approx_triangle_count = 0;
+    ui approx_triangle_count = 0;
     std::vector<std::pair<VertexID, VertexID>> sampled_edges;
 
     VertexID* neighbors;
-    ui neighbor_count, sampled_edge_count = 0;
-    VertexID random_vtx, v, w;
+    ui neighbor_count, sampled_edge_count = 0, wedge_count = 0;
+    VertexID random_vtx, v, w, edge_start_vtx, edge_end_vtx;
 
     for (const auto &edge_key: graph->edge_map){
         if(Util::isEdgeSelectable(probability)){
@@ -77,10 +79,13 @@ void ApproximationAlgorithm::EWSampleForPartitionEdges(const Graph *graph, float
     }
 
     std::cout << "Sampled Edge Count From Partition : " << sampled_edge_count << std::endl;
+    std::cout << "Full Graph Edge Size : " << graph->full_graph_edge_map.size() << std::endl;
 
     for (const auto &edge: sampled_edges){
 
         VertexID lower_degree_vertex, higher_degree_vertex;
+        neighbor_count = 0;
+
         if(graph->getVertexDegree(edge.first) <= graph->getVertexDegree(edge.second)){
             lower_degree_vertex = edge.first;
             higher_degree_vertex = edge.second;
@@ -95,6 +100,8 @@ void ApproximationAlgorithm::EWSampleForPartitionEdges(const Graph *graph, float
             continue;
         }
 
+        wedge_count++;
+
         random_vtx = Util::randomlySelectedEdge(neighbors, neighbor_count, lower_degree_vertex);
 
         if(lower_degree_vertex < random_vtx){
@@ -105,7 +112,19 @@ void ApproximationAlgorithm::EWSampleForPartitionEdges(const Graph *graph, float
             w = lower_degree_vertex;
         }
 
-        if(graph->full_graph_edge_map.find(std::make_pair(graph->idx_array[v], graph->idx_array[w])) != graph->full_graph_edge_map.end()){
+        //std::cout << "Wedge No " << wedge_count << " : " << higher_degree_vertex << ", " << v << ", " << w << std::endl;
+
+        if(graph->idx_array[v] < graph->idx_array[w]){
+            edge_start_vtx = graph->idx_array[v];
+            edge_end_vtx = graph->idx_array[w];
+
+        }else{
+            edge_start_vtx = graph->idx_array[w];
+            edge_end_vtx = graph->idx_array[v];
+        }
+
+
+        if(graph->full_graph_edge_map.find(std::make_pair(edge_start_vtx, edge_end_vtx)) != graph->full_graph_edge_map.end()){
             approx_triangle_count = approx_triangle_count + graph->getVertexDegree(higher_degree_vertex) - 1;
         }       
 
@@ -113,7 +132,9 @@ void ApproximationAlgorithm::EWSampleForPartitionEdges(const Graph *graph, float
     
     approx_triangle_count = (ui)(approx_triangle_count /(float) (3 * probability));
 
-    std::cout << "Approximate Triangle Count with Probability : " << probability << " - " << approx_triangle_count << std::endl;
+    std::cout << "Approximate Triangle Count with Probability - " << probability << " : " << approx_triangle_count << std::endl;
+
+    return approx_triangle_count;
 }
 
 

@@ -426,14 +426,17 @@ void Graph::loadGraphWithPartitionedEdgesFromFile(const std::string& partitioned
         std::sort(neighbors + offsets[i], neighbors + offsets[i + 1]); // sorting the neighbors of every vertex
     }
 
-    std::ifstream original_file(partitioned_edge_file_path);
+    std::ifstream original_file(original_file_path);
 
     if (!original_file.is_open()) {
         std::cout << "Can not open the graph file " << partitioned_edge_file_path << " ." << std::endl;
         exit(-1);
     }
 
-    while (std::getline(infile, input_line)) {
+    line_count = 0, count = 0, comment_line_count = 4;
+    ui org_vertices_count = 0, org_edges_count = 0;
+
+    while (std::getline(original_file, input_line)) {
 
         //std::cout << " Input Line : " << input_line << std::endl;
 
@@ -449,13 +452,10 @@ void Graph::loadGraphWithPartitionedEdgesFromFile(const std::string& partitioned
                     std::getline(ss, token, ' ');
                     if (!(token.rfind("#", 0) == 0 || token.rfind("Nodes:", 0) == 0 || token.rfind("Edges:", 0) == 0)) {
                         if (count == 0) {
-                            vertices_count = stoi(token);
-                            degrees = new ui[vertices_count];
-                            std::fill(degrees, degrees + vertices_count, 0);
-        
+                            org_vertices_count = stoi(token);
                             count = 1;
                         } else {
-                            edges_count = stoi(token);
+                            org_edges_count = stoi(token);
                             count = 0;
                         }
                         
@@ -469,18 +469,18 @@ void Graph::loadGraphWithPartitionedEdgesFromFile(const std::string& partitioned
         }
     }
 
-    line_count = 0, count = 0, comment_line_count = 4;
-
     while (original_file >> begin)
     {
         original_file >> end;
-        if(!(begin >= vertices_count || end >= vertices_count || begin == end)){
+        if(!(begin >= org_vertices_count || end >= org_vertices_count || begin == end)){
             if(begin < end){
                 full_graph_edge_map[std::make_pair(begin, end)] = true;
             }else{
                 full_graph_edge_map[std::make_pair(end, begin)] = true;
-            }            
+            }             
         }
     }
+
+    original_file.close();
 }
 
