@@ -55,10 +55,12 @@ ui Util::exact_neighbor_intersection(const Graph* data_graph, VertexID& u, Verte
 	VertexID* w_neighbors = data_graph->getVertexNeighbors(w, w_nbr_cnt);
 
 	std::unordered_set <VertexID> set;
+
 	for (int i = 0; i < u_nbr_cnt; i++) set.insert(u_neighbors[i]);
 	for (int j = 0; j < w_nbr_cnt; j++) {
-		if (set.find(w_neighbors[j]) != set.end())
-			common++;
+		if (set.find(w_neighbors[j]) != set.end()){
+        common++;
+    }
 	}
 	return common;
 }
