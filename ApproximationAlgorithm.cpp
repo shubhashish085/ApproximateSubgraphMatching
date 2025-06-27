@@ -3,6 +3,64 @@
 #include "types.h"
 #include <vector>
 
+
+ui ApproximationAlgorithm::EWSample_square(const Graph *graph, float probability){
+
+    ui approx_square_count = 0;
+    std::vector<std::pair<VertexID, VertexID>> sampled_edges;
+
+    VertexID* neighbors;
+    ui neighbor_count, sampled_edge_count = 0;
+    VertexID random_vtx, u, w;
+
+    for (const auto &edge_key: graph->edge_map){
+        if(Util::isEdgeSelectable(probability)){
+            sampled_edges.push_back(std::make_pair(edge_key.first.first, edge_key.first.second));
+            sampled_edge_count++;
+        }
+    }
+
+    std::cout << "Sampled Edge Count : " << sampled_edge_count << std::endl;
+
+    for (const auto &edge: sampled_edges){
+
+        VertexID lower_degree_vertex, higher_degree_vertex;
+        if(graph->getVertexDegree(edge.first) <= graph->getVertexDegree(edge.second)){
+            lower_degree_vertex = edge.first;
+            higher_degree_vertex = edge.second;
+        }else{
+            lower_degree_vertex = edge.second;
+            higher_degree_vertex = edge.first;
+        }
+
+        neighbors = graph-> getVertexNeighbors(lower_degree_vertex, neighbor_count);
+
+        if(neighbor_count < 2){
+            continue;
+        }
+
+        random_vtx = Util::randomlySelectedEdge(neighbors, neighbor_count, higher_degree_vertex);
+
+        if(higher_degree_vertex < random_vtx){
+            u = higher_degree_vertex;
+            w = random_vtx;
+        }else {
+            u = random_vtx;
+            w = higher_degree_vertex;
+        }
+
+        approx_square_count +=  (Util::exact_neighbor_intersection(graph, u, w) - 1);   
+
+    }
+
+    approx_square_count = (ui)(approx_square_count /(float) (4 * probability));
+
+    std::cout << "Approximate Square Count with Probability : " << probability << " - " << approx_square_count << std::endl;
+
+    return approx_square_count;
+}
+
+
 ui ApproximationAlgorithm::EWSample(const Graph *graph, float probability){
 
     ui approx_triangle_count = 0;

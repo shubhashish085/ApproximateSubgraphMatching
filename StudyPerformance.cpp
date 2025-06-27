@@ -8,7 +8,7 @@
 
 
 
-/*int main(int argc, char** argv){
+int main(int argc, char** argv){
 
     std::string input_data_graph_file = "/home/kars1/Research_Projects/metis/2_livejournal_0.graph";
 
@@ -18,11 +18,11 @@
     float probability = 0.1;
 
     while (probability <= 1.00){
-        ApproximationAlgorithm::EWSample(data_graph, probability);
+        ApproximationAlgorithm::EWSample_square(data_graph, probability);
         probability += 0.1;
     }    
 
-}*/
+}
 
 
 /*
@@ -64,7 +64,7 @@ int main(int argc, char** argv){
 }*/
 
 
-int main(int argc, char** argv){
+/*int main(int argc, char** argv){
 
     std::string input_data_graph_file_prefix = "/home/kars1/Research_Projects/metis/", input_data_graph_file;
     std::string original_data_graph_file = "/home/kars1/Parallel_computation/dataset/com-amazon.ungraph.txt";
@@ -133,4 +133,4 @@ int main(int argc, char** argv){
 
     MPI_Finalize();       
 
-}
+}*/
